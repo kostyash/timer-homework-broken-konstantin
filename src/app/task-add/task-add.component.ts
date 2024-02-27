@@ -22,7 +22,7 @@ export class TaskAddComponent implements OnInit {
       text: [
         null,
         Validators.compose([Validators.required, Validators.minLength(2)]),
-        this.validateNameExists.bind(this),
+        this.validateNameExists.bind(this)
       ],
     });
   }
@@ -35,6 +35,10 @@ export class TaskAddComponent implements OnInit {
   }
 
   validateNameExists(control: AbstractControl) {
-    return of(null);
+    return this.service.nameExists(control.value).pipe(
+      map((exists: boolean) =>
+      exists ? { nameTaken: true } : null
+      )
+    );
   }
 }
