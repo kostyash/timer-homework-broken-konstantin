@@ -11,8 +11,9 @@ export class TimerManagerService {
     subj$: BehaviorSubject<number>;
     isRunning: boolean;
   }[] = [];
+  
   constructor(private ngZone: NgZone) {
-    this.runTimers(); //FIXME: can be a performance issue
+    this.runTimers();
   }
 
   getTimer(id: number): Observable<number> {
@@ -41,7 +42,7 @@ export class TimerManagerService {
       .pipe(
         filter((x) => this.timers.findIndex((y) => y.isRunning) >= 0),
         tap(() => {
-          this.ngZone.run(() => {
+          this.ngZone.runOutsideAngular(() => {
             this.timers
               .filter((x) => x.isRunning)
               .forEach((subj) => subj.subj$.next(subj.subj$.value + 1));
