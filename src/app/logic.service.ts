@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { TaskModel } from './models/task-model';
-import { Observable, combineLatest, Subject, of } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 import { TaskFactoryService } from './task-factory.service';
-import { map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { CloneSubject } from './clone-subject';
 
 @Injectable({
@@ -35,7 +35,7 @@ export class LogicService {
   }
 
   public nameExists(value: string): Observable<boolean> {
-    return of(this.state.find((x) => x.name.toLowerCase() === value.toUpperCase()) !== undefined);
+    return of(this.state.find((x) => x.name.toLowerCase() === value.toLowerCase()) !== undefined);
   }
 
   private toggleAllButtonTexts(
@@ -62,7 +62,7 @@ export class LogicService {
       this.setPause(tsk);
     }
   }
-  
+
   private setPlay(tsk: TaskModel) {
     tsk.buttonText = 'play_arrow';
     this.taskService.pause(tsk.id);
