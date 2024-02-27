@@ -41,7 +41,7 @@ export class LogicService {
     return res.asObservable();
   }
   public nameExists(value: string): Observable<boolean> {
-    return of(this.state.find((x) => x.name === value) !== undefined);
+    return of(this.state.find((x) => x.name.toUpperCase() === value.toUpperCase()) !== undefined);
   }
   private toggleAllButtonTexts(
     tasks: TaskModel[],

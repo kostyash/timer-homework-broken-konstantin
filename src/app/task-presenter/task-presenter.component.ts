@@ -21,10 +21,11 @@ export class TaskPresenterComponent implements OnInit {
   @Input() task: TaskModel;
   @Output() clicked = new EventEmitter<TaskModel>();
 
+  constructor (private cdr: ChangeDetectorRef){}
+
   ngOnInit(): void {
-    setTimeout(() => {
-      this.task.name = this.task.name.toUpperCase();
-    }, 0);
+    this.task.name = this.task.name.toUpperCase();
+    this.cdr.detectChanges(); 
   }
 
   public click() {
