@@ -1,5 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
-import { Observable, timer, BehaviorSubject } from 'rxjs';
+import { Observable, timer, BehaviorSubject, Subscription } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,9 @@ export class TimerManagerService {
     isRunning: boolean;
   }[] = [];
   
-  constructor(private ngZone: NgZone) {
-    this.runTimers();
+  timersSub: Subscription;
+
+  constructor(private ngZone: NgZone) {    
   }
 
   getTimer(id: number): Observable<number> {
@@ -28,17 +29,23 @@ export class TimerManagerService {
     const timer = this.timers.find((x) => x.id === id);
     if (timer) {
       timer.isRunning = true;
+      this.runTimers();
     }
   }
   public pauseTimer(id: number): void {
     const timer = this.timers.find((x) => x.id === id);
     if (timer) {
       timer.isRunning = false;
+      this.runTimers();
     }
   }
 
   private runTimers(): void {
-    timer(0, 1000)
+    if(this.timers.findIndex((y) => y.isRunning) >= 0) {
+      if(this.timersSub && !this.timersSub.closed){
+        return;
+      }
+      this.timersSub = timer(0, 1000)
       .pipe(
         filter((x) => this.timers.findIndex((y) => y.isRunning) >= 0),
         tap(() => {
@@ -50,5 +57,8 @@ export class TimerManagerService {
         })
       )
       .subscribe();
+    } else {
+      this.timersSub && this.timersSub.unsubscribe();
+    }    
   }
 }
